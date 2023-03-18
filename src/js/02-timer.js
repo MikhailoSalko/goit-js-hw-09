@@ -62,6 +62,7 @@ function startingCountdown() {
 
 function stopInterval(time) {
   if (time < 1000) {
+    Report.success('The countdown is over.');
     clearInterval(timerId);
     return;
   }
