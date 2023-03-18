@@ -20,7 +20,7 @@ function handleSubmitForm(e) {
 
   let { delay, step, amount } = formInput;
   for (let i = 0; i < amount; i++) {
-    position = i + 1;
+    let position = i + 1;
     delay += step;
     createPromise(position, delay)
       .then(({ position, delay }) => {
