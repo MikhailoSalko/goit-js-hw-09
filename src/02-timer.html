@@ -6,6 +6,26 @@
     <title>Countdown timer</title>
     <link rel="stylesheet" href="css/common.css" />
   </head>
+  <style>
+    .timer {
+      display: flex;
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .field:not(:last-child) {
+      margin-right: 15px;
+    }
+    .value {
+      font-size: 40px;
+    }
+    .label {
+      font-size: 15px;
+    }
+  </style>
   <body>
     <p><a href="index.html">Go back</a></p>
 

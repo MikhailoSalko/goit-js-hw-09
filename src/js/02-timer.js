@@ -1,17 +1,18 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
-
-let timeToCount = 0;
-let isStarted = false;
+import { Report } from 'notiflix/build/notiflix-report-aio';
 
 const currentDate = Date.now();
+let FinishDateInMs = 0;
+let isStarted = false;
+let timerId = null;
+
 const startBtn = document.querySelector('button[data-start]');
 const daysEl = document.querySelector('span[data-days]');
 const hoursEl = document.querySelector('span[data-hours]');
 const minutesEl = document.querySelector('span[data-minutes]');
 const secondsEl = document.querySelector('span[data-seconds]');
-startBtn.setAttribute('disabled', true);
 
 const datePicker = flatpickr('#datetime-picker', {
   enableTime: true,
@@ -19,17 +20,16 @@ const datePicker = flatpickr('#datetime-picker', {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    // console.log(selectedDates[0]);
     if (currentDate < selectedDates[0]) {
       if (isStarted) {
-        Notify.failure('The countdown has already started');
+        Report.failure('The countdown has already started!');
         return;
       }
       startBtn.removeAttribute('disabled');
-      timeToCount = selectedDates[0].getTime();
-      return timeToCount;
+      FinishDateInMs = selectedDates[0].getTime();
+      return FinishDateInMs;
     }
-    if (currentDate > selectedDates[0] && isStarted) {
+    if (currentDate > selectedDates[0] || isStarted) {
       Notify.failure('Please choose a date in the future');
       startBtn.setAttribute('disabled', true);
     }
@@ -37,22 +37,37 @@ const datePicker = flatpickr('#datetime-picker', {
 });
 
 startBtn.addEventListener('click', handleCountDown);
+startBtn.setAttribute('disabled', true);
 
 function handleCountDown() {
   startBtn.setAttribute('disabled', true);
   Notify.success('Starting countdown');
   isStarted = true;
+  startingCountdown();
+}
 
-  setInterval(() => {
-    const currenDate = Date.now();
-    let deltaTime = timeToCount - currenDate;
+function startingCountdown() {
+  timerId = setInterval(() => {
+    const updatedDate = Date.now();
+    let deltaTime = FinishDateInMs - updatedDate;
+    stopInterval(deltaTime);
+
     const { days, hours, minutes, seconds } = convertMs(deltaTime);
     daysEl.textContent = days;
     hoursEl.textContent = hours;
     minutesEl.textContent = minutes;
     secondsEl.textContent = seconds;
-    // console.log(convertMs(deltaTime));
   }, 1000);
+}
+
+function stopInterval(time) {
+  if (time < 1000) {
+    clearInterval(timerId);
+    return;
+  }
+}
+function addLeadingZero(value) {
+  return value.toString().padStart(2, '0');
 }
 
 function convertMs(ms) {
@@ -74,8 +89,4 @@ function convertMs(ms) {
   );
 
   return { days, hours, minutes, seconds };
-}
-
-function addLeadingZero(value) {
-  return value.toString().padStart(2, '0');
 }
