@@ -19,14 +19,13 @@ function handleSubmitForm(e) {
   // console.log(formInput);
 
   let { delay, step, amount } = formInput;
-  for (let i = 0; i < amount; i++) {
-    let position = i + 1;
+  for (let i = 1; i <= amount; i++) {
     delay += step;
     createPromise(position, delay)
-      .then(({ position, delay }) => {
+      .then(({ position = i, delay }) => {
         Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
       })
-      .catch(({ position, delay }) => {
+      .catch(({ position = i, delay }) => {
         Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
       });
   }
