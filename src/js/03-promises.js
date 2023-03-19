@@ -3,6 +3,7 @@ import debounce from 'lodash.debounce';
 
 const form = document.querySelector('.form');
 let formInput = {};
+let position = 0;
 
 form.addEventListener('submit', handleSubmitForm);
 form.addEventListener('input', debounce(handleInputValues, 200));
@@ -20,8 +21,9 @@ function handleSubmitForm(e) {
 
   let { delay, step, amount } = formInput;
   for (let i = 1; i <= amount; i++) {
+    position = i;
     delay += step;
-    let position = i;
+
     createPromise(position, delay)
       .then(({ position, delay }) => {
         Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
