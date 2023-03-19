@@ -22,8 +22,6 @@ function handleSubmitForm(e) {
   let { delay, step, amount } = formInput;
   for (let i = 1; i <= amount; i++) {
     position = i;
-    delay += step;
-
     createPromise(position, delay)
       .then(({ position, delay }) => {
         Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
@@ -31,6 +29,7 @@ function handleSubmitForm(e) {
       .catch(({ position, delay }) => {
         Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
       });
+    delay += step;
   }
 
   e.currentTarget.reset();
